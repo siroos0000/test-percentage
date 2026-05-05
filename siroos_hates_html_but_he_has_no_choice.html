@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>siroos_hates_html_but_he_has_no_choice</title>
+<style>
+    body {
+        font-family: Tahoma, Arial, sans-serif;
+        text-align: right;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 50px;
+    }
+    div, input, button {
+        margin: 5px 0;
+    }
+</style>
+</head>
+
+<body dir="rtl">
+
+    <div>تعداد کل:</div>
+    <input type="text" name="text1" id="txt1">
+    
+    <div>تعداد درست:</div>
+    <input type="text" name="text2" id="txt2">
+    
+    <div>تعداد غلط:</div>
+    <input type="text" name="text3" id="txt3">
+    
+    <div>ضریب امتیاز :</div>
+    <input type="text" name="text4" id="txt4" value="3">
+    
+    <button onclick="m()">محاسبه درصد</button>
+    
+    <div id="result" style="font-weight: bold; margin-top: 20px; color: blue;"></div>
+
+    <script>
+        function m() {
+            
+            var all_q = Number(document.getElementById("txt1").value);
+            var correct_q = Number(document.getElementById("txt2").value); 
+            var fall = Number(document.getElementById("txt3").value);
+            var zarib = Number(document.getElementById("txt4").value);
+            
+            if(correct_q+fall > all_q)
+        {
+            document.getElementById("result").innerText = "تعداد درست و غلط از تعداد سوالات بیشتره";
+        }
+        else
+        {
+            if(all_q > 0 && zarib > 0) {
+                var score = ((correct_q * zarib) - fall) / (all_q * zarib) * 100;
+                document.getElementById("result").innerText = "درصد شما: " + score.toFixed(2) + "%";
+            } else {
+                document.getElementById("result").innerText = "لطفا مقادیر معتبر وارد کنید.";
+            }
+        }
+        }
+    </script>
+	
+</body>
+</html>
