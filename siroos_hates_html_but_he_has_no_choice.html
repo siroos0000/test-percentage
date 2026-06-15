@@ -11,6 +11,8 @@
         flex-direction: column;
         align-items: center;
         margin-top: 50px;
+        transform: scale(1.6);
+        transform-origin: top;
     }
     div, input, button {
         margin: 5px 0;
@@ -19,24 +21,202 @@
 </head>
 
 <body dir="rtl">
-
+    <div>حساب کردن تعداد سوالات</div>
+    <input type="checkbox" name="ch1" id="ch1" onchange="question()" >
+    <div id="startchoose"></div>
+    <input type="text" name="!qtxt" id="qtxt1" hidden="true"onchange="this.value = toEnglishDigits(this.value)">
+    <div id="endchoose"></div>
+    <input type="text" name="2qtxt" id="qtxt2" hidden="true"onchange="this.value = toEnglishDigits(this.value)">
+    <div id="ch_text"></div>
+    <input type="checkbox" name="ch2" id="ch2" hidden ="true" > 
+    <button id="btn1" hidden =true onclick="numberqstions()">محاسبه تعداد</button>
+    <div id="result1" style="font-weight: bold; margin-top: 20px; color: blue;"></div>
+    <div>زمان سنج</div>
+    <input type="checkbox" name="ch3" id="ch3" onchange="timer_show()" >
+    <div id="timerDisplay" hidden ="true">00:00</div>
+    <div hidden="true" id="2"> شخصی سازی ثانیه بر اساس سوالات </div>
+    <input type="checkbox" name="ch4" id="ch4" hidden ="true" onchange="timer_show()"> 
+    <input type="number" name="num1" id="num1" hidden ="true"value="60" placeholder="ثانیه بر اساس تست"> 
+        <input type="number" id="secondsInput" placeholder="  تعداد (به صورت پیش فرض هر سوال = 60 ثانیه)"  hidden =true; style="width: 300px; text-align: center;">
+    <button id="Start_btn" onclick="startTimer()"hidden ="true">شروع</button>
+    <button id="Stop_btn" onclick="stopTimer()"hidden ="true">توقف</button>
+    <button id="R_btn" onclick="resetTimer()"hidden ="true">بازنشانی</button>
     <div>تعداد کل:</div>
-    <input type="text" name="text1" id="txt1">
+    <input type="text" name="text1" id="txt1" onchange="this.value = toEnglishDigits(this.value)">
     
     <div>تعداد درست:</div>
-    <input type="text" name="text2" id="txt2">
+    <input type="text" name="text2" id="txt2" onchange="this.value = toEnglishDigits(this.value)">
     
     <div>تعداد غلط:</div>
-    <input type="text" name="text3" id="txt3">
+    <input type="text" name="text3" id="txt3"  oninput="this.value = toEnglishDigits(this.value)">
     
     <div>ضریب امتیاز :</div>
-    <input type="text" name="text4" id="txt4" value="3">
+    <input type="text" name="text4" id="txt4" value="3"onchange="this.value = toEnglishDigits(this.value)">
     
     <button onclick="m()">محاسبه درصد</button>
     
     <div id="result" style="font-weight: bold; margin-top: 20px; color: blue;"></div>
 
     <script>
+        var option_test = false;
+       // var All_qustions;
+        let timerInterval; 
+let remainingSeconds = 0;
+
+function startTimer() {
+    var numbe =Number(document.getElementById("num1").value);
+    if (timerInterval) clearInterval(timerInterval);
+
+    
+    const inputElem = document.getElementById('secondsInput');
+    const minutes = parseInt(inputElem.value, 10);
+    if (isNaN(minutes) || minutes <= 0) {
+        alert('لطفاً یک عدد مثبت وارد کنید.');
+        return;
+    }
+    remainingSeconds = minutes * numbe; 
+
+    updateDisplay(); 
+
+    timerInterval = setInterval(() => {
+        remainingSeconds--;
+        updateDisplay();
+        if (remainingSeconds <= 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            alert('زمان تمام شد!');
+        }
+    }, 1000);
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+}
+
+function resetTimer() {
+    stopTimer();
+    remainingSeconds = 0;
+    document.getElementById('secondsInput').value = '';
+    updateDisplay();
+}
+
+function updateDisplay() {
+    const mins = Math.floor(remainingSeconds / 60);
+    const secs = remainingSeconds % 60;
+    document.getElementById('timerDisplay').innerText =
+        `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+        function timer_show()
+        {
+         var timer_enable =  Boolean(document.getElementById("ch3").checked);
+         var option_show = Boolean(document.getElementById("ch4").checked)
+         if(option_show!==true)
+         {
+            option_test = false
+         }
+         if(timer_enable === true)
+         {
+            document.getElementById("secondsInput").hidden = false;
+            document.getElementById("timerDisplay").hidden = false;
+            document.getElementById("Start_btn").hidden = false;
+            document.getElementById("Stop_btn").hidden = false;
+            document.getElementById("R_btn").hidden = false; 
+            document.getElementById("ch4").hidden = false;
+            document.getElementById("2").hidden = false;
+            if(option_show === true || option_test === true)
+         {
+            
+            document.getElementById("num1").hidden =false;
+         }
+         else
+         {
+            
+            document.getElementById("num1").hidden =true;
+         }
+         }
+         else
+         {
+            document.getElementById("secondsInput").hidden = true;
+            document.getElementById("timerDisplay").hidden = true;
+            document.getElementById("Start_btn").hidden = true;
+            document.getElementById("Stop_btn").hidden = true;
+            document.getElementById("R_btn").hidden = true;
+            document.getElementById("ch4").hidden = true;
+            document.getElementById("2").hidden = true;
+      
+         }
+        }
+        function numberqstions()
+        {
+        var even_numbers = Boolean(document.getElementById("ch2").checked)
+
+          var startQ = Number(document.getElementById("qtxt1").value)
+          var endQ = Number(document.getElementById("qtxt2").value)
+          if(even_numbers === true)
+          {
+           if(startQ %2 !== 0)
+           {
+            startQ++;
+           }
+           if(endQ %2 !== 0)
+           {
+            endQ--;
+           }
+           
+           var total_q = (endQ -startQ)/2 +1;
+           
+
+          }
+          else
+          {
+            var total_q = endQ -startQ +1;
+
+          }
+          if(startQ>0 && endQ>startQ)
+          {
+            document.getElementById("result1").innerText="تعداد کل = "+total_q;
+            document.getElementById("txt1").value = total_q;
+          //  All_qustions = total_q;
+            document.getElementById("secondsInput").value = total_q;
+            option_test = true;
+            document.getElementById("ch4").checked = true;
+          }
+          else
+          {
+            document.getElementById("result1").innerText=" لطفا تعداد را به درستی وارد کنید";
+          } 
+          
+
+        }
+        function question()
+        {
+       // var even_numbers = Boolean(document.getElementById("ch_text").checked)
+        var true_check = Boolean(document.getElementById("ch1").checked)
+       // document.getElementById("result").innerText = true_check;
+       if(true_check ===true)
+       {
+        document.getElementById("qtxt1").hidden=false;
+        document.getElementById("qtxt2").hidden=false;
+        document.getElementById("btn1").hidden=false;
+        document.getElementById("ch2").hidden=false;
+        document.getElementById("ch_text").innerText="زوج";
+        document.getElementById("startchoose").innerText="اولین سوال";
+        document.getElementById("endchoose").innerText="آخرین سوال";
+       }
+       else
+       {
+        document.getElementById("qtxt1").hidden=true;
+        document.getElementById("qtxt2").hidden=true;
+        document.getElementById("btn1").hidden=true;
+        document.getElementById("ch2").hidden=true;
+        document.getElementById("ch_text").innerText="";
+        document.getElementById("startchoose").innerText="";
+        document.getElementById("endchoose").innerText="";
+        document.getElementById("result1").innerText="";
+       }
+        }
+
         function m() {
             
             var all_q = Number(document.getElementById("txt1").value);
@@ -58,6 +238,13 @@
             }
         }
         }
+        function toEnglishDigits(str) {
+    const persian = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+    for (let i = 0; i <= persian.length-1; i++) {
+        str = str.replace(new RegExp(persian[i], 'g'), i); 
+    }
+    return str.replace(/[^0-9]/g, '');
+}
     </script>
 	
 </body>
